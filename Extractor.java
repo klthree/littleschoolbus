@@ -1,5 +1,5 @@
 /**
- * This class will iterate over the data in a file and extract the least
+ * This class will iterate over the data in a bmp file and extract the least
  * significant bit from each byte
  * It will then string those bits together and examine them.
  */
@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.BufferedInputStream;
 
 public class Extractor {
     public static void main(String[] args) {
@@ -25,21 +26,21 @@ public class Extractor {
             System.exit(-1);
         }
 
-        FileInputStream byteReader = null;
+        FileInputStream fis = null;
         ArrayList<String> listOfBytes = null;
+        BufferedInputStream byteReader = null;
+
         try {
-            byteReader = new FileInputStream(filename);
+            fis = new FileInputStream(filename);
+            byteReader = new BufferedInputStream(fis);
             listOfBytes = new ArrayList<String>();
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        int bits;
-
-        
+        int bits;        
         try {
-
             byteReader.skip(54);
             while ((bits = byteReader.read()) != -1) {
                 listOfBytes.add(Integer.toBinaryString(bits));
@@ -55,13 +56,9 @@ public class Extractor {
             messageBinary.append(s.charAt(s.length() - 1));
         }
 
-//        System.out.println(messageBinary.toString);
-
         String[] split = messageBinary.toString().split("(?<=\\G.{8})");
 
         StringBuilder sb = new StringBuilder();
-
-
 
         for (String s: split) {
             sb.append((char)Integer.parseInt(s, 2));
